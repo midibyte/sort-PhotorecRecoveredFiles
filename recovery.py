@@ -5,6 +5,7 @@ from time import localtime, strftime
 import shutil
 import jpgSorter
 import numberOfFilesPerFolderLimiter
+import sys
 
 
 def getNumberOfFilesInFolderRecursively(start_path = '.'):
@@ -113,7 +114,11 @@ for root, dirs, files in os.walk(source, topdown=False):
 
         destinationFile = os.path.join(destinationDirectory, fileName)
         if not os.path.exists(destinationFile):
-            shutil.copy2(sourcePath, destinationFile)
+            try:
+                shutil.copy2(sourcePath, destinationFile)
+            # catch error when creating invalid directory or file name (beginning with a number)
+            except OSError as err:
+                print("OSError: {0}".format(err)) 
 
         fileCounter += 1
         if((fileCounter % onePercentFiles) == 0):
